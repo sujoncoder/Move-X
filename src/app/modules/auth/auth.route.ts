@@ -1,7 +1,9 @@
 import { Router } from "express";
-import { createUser, loginUser } from "./auth.controller";
-import { validateRequest } from "../../middlewares/validateRequest";
+
+import { loginUser } from "./auth.controller";
+import { createUser } from "../user/uer.controller";
 import { createUserZodSchema } from "../user/user.validation";
+import { validateRequest } from "../../middlewares/validateRequest";
 
 
 // AUTH ROUTES
