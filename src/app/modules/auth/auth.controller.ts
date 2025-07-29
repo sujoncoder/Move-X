@@ -16,7 +16,7 @@ export const createUser = catchAsync(async (req: Request, res: Response, next: N
         message: "User created successfully",
         user
     });
-})
+});
 
 
 // CREATE USER CONTROLLER
