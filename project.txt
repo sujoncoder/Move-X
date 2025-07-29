@@ -1,0 +1,102 @@
+--- PROJECT OVERVIEW --- 
+
+🚚🚚🚚 Move-X: Parcel Delivery API System 🚚🚚🚚
+
+
+✅ ROLES
+----------
+→ 🧍 Sender - Creates parcel delivery requests  
+→ 📥 Receiver - Receives parcels and confirms delivery  
+→ 🛡️ Admin - Manages users, parcels, and delivery statuses  
+
+
+👥 USER FUNCTIONALITIES 👥
+----------------------------
+
+🧍 Senders can:
+    → Create parcel delivery requests  
+    → Cancel parcels (only if not dispatched)  
+    → View all their parcels and status logs  
+
+📥 Receivers can:
+    → View incoming parcels  
+    → Confirm parcel delivery  
+    → View delivery history  
+
+🛡️ Admins can:
+    → View and manage all users and parcels
+    → Block or unblock users or parcels 
+    → Update parcel delivery status
+    → (Optional) Assign delivery agents
+
+
+👨 USER SYSTEM DESIGN 👨
+----------------------------
+
+✅ Each user has:
+    → name, email, phone, password, role (sender/receiver/admin), isBlocked
+
+✅ Admin can:
+    → View all users  
+    → Block or unblock any user  
+
+
+📦 PARCEL LOGIC 📦
+----------------------------
+
+✅ Parcel Creation:
+    → Only created by Sender  
+
+✅ Required Parcel Fields:
+    → type, weight  
+    → sender info & receiver info  
+    → pickupAddress, deliveryAddress  
+    → delivery fee, expected delivery date  
+    → status (current), status logs (history)  
+    → unique tracking ID (Format: TRK-YYYYMMDD-xxxxxx)
+
+✅ Status Lifecycle:
+    → Requested → Approved → Dispatched → In Transit → Delivered  
+
+✅ Extra Logic:
+    → Can be canceled, blocked, returned, or rescheduled  
+    → Each parcel contains a `trackingEvents[]`:  
+       → Array of status logs: { location, timestamp, status, note }  
+
+✅ Fee Calculation (Optional):
+    → Based on weight, distance, or a flat rate  
+
+
+⚠️ BUSINESS RULES & VALIDATIONS ⚠️
+-----------------------------------
+
+→ Sender can cancel only if status === "Requested"  
+→ Receiver can confirm delivery only if status === "In Transit"  
+→ Blocked users are restricted from all features  
+→ Parcel status must follow a valid flow (no skipping steps)  
+→ All routes protected via:
+    → Role-check middleware  
+    → Ownership-check middleware  
+
+
+🧩 API DESIGN 🧩
+----------------------------
+
+🧑‍💻 Auth:
+    → POST - /api/v1/auth/register  
+    → POST - /api/v1/auth/login  
+
+👤 User (Admin only):
+    → GET    - /api/v1/users  
+    → PATCH  - /api/v1/users/block/:id  
+    → PATCH  - /api/v1/users/unblock/:id  
+
+📦 Parcel:
+    → GET    - /api/v1/parcels/me               → Sender views their parcels  
+    → POST   - /api/v1/parcels                  → Sender creates parcel  
+    → PATCH  - /api/v1/parcels/cancel/:id       → Sender cancels their parcel  
+    → GET    - /api/v1/parcels/incoming         → Receiver views incoming parcels  
+    → PATCH  - /api/v1/parcels/confirm/:id      → Receiver confirms delivery  
+    → GET    - /api/v1/parcels/:id/status-log   → View status logs of a parcel  
+    → PATCH  - /api/v1/parcels/status/:id       → Admin updates parcel status  
+    → GET    - /api/v1/parcels                  → Admin views all parcels (with filters)
