@@ -87,7 +87,7 @@
     → POST - /api/v1/auth/login  
 
 👤 User (Admin only):
-    → GET    - /api/v1/users  
+    → GET    - /api/v1/users
     → PATCH  - /api/v1/users/block/:id  
     → PATCH  - /api/v1/users/unblock/:id  
 

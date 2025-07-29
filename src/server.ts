@@ -5,6 +5,7 @@ import app from "./app";
 import { SECRET } from "./app/config/env";
 import connectDB from "./app/config/database";
 import gracefulShutdown, { setServer } from "./app/config/shutdown";
+import { seedAdmin } from "./app/utils/seedAdmin";
 
 
 let server: Server;
@@ -20,6 +21,13 @@ const startServer = async () => {
 };
 
 
+// CALL SYNCHRONIZING ===> FIRST START SERVER THEN SEEDING SUPER ADMIN
+(async () => {
+    await startServer();
+    await seedAdmin();
+})();
+
+
 // UNHANDLE REJECTION ERROR
 process.on("uncaughtException", (error) => gracefulShutdown("Uncaught Exception", error));
 
@@ -32,4 +40,4 @@ process.on("SIGINT", () => gracefulShutdown("SIGINT"));
 
 
 // START SERVER
-startServer();
+// startServer();

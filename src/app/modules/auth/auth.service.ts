@@ -1,26 +1,17 @@
+// import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
+
 import { STATUS_CODE } from "../../constants/httpStatus";
 import { ApiError } from "../../errors/ApiError";
 import { IUser } from "../user/user.interface";
 import { User } from "../user/user.model";
-
-
-// CREATE USER SERVICE
-export const createUserService = async (payload: Partial<IUser>) => {
-    const { name, email, phone, password } = payload;
-
-    const user = await User.create({ name, email, phone, password });
-
-    return user;
-};
+import { SECRET } from "../../config/env";
+import { generateToken } from "../../utils/jwt";
 
 
 // LOGIN USER SERVICE
 export const loginUserService = async (payload: Partial<IUser>) => {
     const { email, password } = payload;
-
-    if (!(email && password)) {
-        throw new ApiError(STATUS_CODE.BAD_REQUEST, "Email and passwod field are required")
-    };
 
     const isUserExist = await User.findOne({ email });
 
@@ -28,14 +19,23 @@ export const loginUserService = async (payload: Partial<IUser>) => {
         throw new ApiError(STATUS_CODE.BAD_REQUEST, "User not exist !")
     };
 
-    const matchPassword = password === isUserExist.password;
+    if (isUserExist.isBlocked) {
+        throw new ApiError(STATUS_CODE.UNAUTHORIZED, "Your account is blocked !");
+    };
+
+    const matchPassword = await bcrypt.compare(password as string, isUserExist.password);
 
     if (!matchPassword) {
-        throw new ApiError(STATUS_CODE.BAD_REQUEST, "User password is incorrect !")
+        throw new ApiError(STATUS_CODE.BAD_REQUEST, " incorrect password !")
     };
 
-    return {
-        email,
-        password
+    const jwtPayload = {
+        userId: isUserExist._id,
+        email: isUserExist.email,
+        role: isUserExist.role
     };
+
+    const accessToken = await generateToken(jwtPayload, SECRET.JWT_ACCESS_SECRET, SECRET.JWT_ACCESS_EXPIRES);
+
+    return { accessToken };
 };
