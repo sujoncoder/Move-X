@@ -4,7 +4,7 @@ import { NextFunction, Request, Response } from "express";
 import { catchAsync } from "../../utils/catchAsync";
 import { STATUS_CODE } from "../../constants/httpStatus";
 
-import { createUserService, deleteUserByIdService, getAllUsersService, getUserByIdService, updateUserRoleService } from "./user.service";
+import { createUserService, deleteMyProfileService, deleteUserByIdService, getAllUsersService, getMyProfileService, getUserByIdService, updateMyProfileService, updateUserRoleService, userStatusService } from "./user.service";
 import { sendResponse } from "../../utils/sendResponse";
 import { ApiError } from "../../errors/ApiError";
 
@@ -93,3 +93,74 @@ export const updateUserRole = catchAsync(async (req: Request, res: Response, nex
         data: user
     });
 });
+
+
+// DELETE MY-PROFILE CONTROLLER
+export const getMyProfile = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const userId = req.user?.userId;
+
+    const prifile = await getMyProfileService(userId);
+
+    sendResponse(res, {
+        success: true,
+        statusCode: STATUS_CODE.OK,
+        message: "Profile retrieved successfully",
+        data: prifile,
+    });
+});
+
+
+// UPDATE MY-PROFILE CONTROLLER
+export const updateMyProfile = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const userId = req.user.userId;
+    const payload = req.body;
+
+    const updatedUser = await updateMyProfileService(userId, payload);
+
+    sendResponse(res, {
+        success: true,
+        statusCode: STATUS_CODE.OK,
+        message: "Profile updated successfully",
+        data: updatedUser,
+    });
+});
+
+
+// DELETE MY-PROFILE CONTROLLER
+export const deleteMyProfile = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const userId = req.user?.userId;
+
+    const deletedUser = await deleteMyProfileService(userId);
+
+    sendResponse(res, {
+        success: true,
+        statusCode: STATUS_CODE.OK,
+        message: "Profile deleted successfully",
+        data: deletedUser,
+    });
+});
+
+
+// USER STATUS CHANGE CONTROLLER
+export const userStatus = catchAsync(
+    async (req: Request, res: Response, next: NextFunction) => {
+
+        const userId = req.params.id;
+        const { isBlocked } = req.body;
+
+
+        const result = await userStatusService(userId, isBlocked);
+
+
+
+        sendResponse(res, {
+            success: true,
+            statusCode: STATUS_CODE.OK,
+            message: result?.isBlocked
+                ? "User has been blocked successfully."
+                : "User has been unblocked successfully.",
+            data: result,
+        });
+    }
+);
+

@@ -100,3 +100,32 @@
     → GET    - /api/v1/parcels/:id/status-log   → View status logs of a parcel  
     → PATCH  - /api/v1/parcels/status/:id       → Admin updates parcel status  
     → GET    - /api/v1/parcels                  → Admin views all parcels (with filters)
+
+
+
+
+
+
+
+
+
+
+    DONE 🥙🥙🥙 --------- 
+    global error handler,
+    notfoun route,
+    customs status code,
+    error class extends to apiError middleware,
+    check auth middleware,
+    user register and login aftr login generate access token and verify that token,
+    route protected,
+    seed admin,
+    admin  can view all users,
+    admin  can view signle user by id,
+    admin  can update user role,
+    admin  can delete user,
+    admin  can block / unblock user,
+
+
+    user can her profile
+    user can update her profile,
+    user can delete her profile,

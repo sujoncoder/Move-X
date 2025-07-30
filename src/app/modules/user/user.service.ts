@@ -91,3 +91,74 @@ export const updateUserRoleService = async ({ id, role }: payloadType) => {
 
     return user;
 };
+
+
+// GET MY-PROFILE SERVICE
+export const getMyProfileService = async (userId: string) => {
+    const user = await User.findById(userId).select("-password");
+
+    if (!user) {
+        throw new ApiError(STATUS_CODE.NOT_FOUND, "User not found.");
+    };
+
+    return user;
+};
+
+
+// UPDATE MY-PROFILE SERVICE
+export const updateMyProfileService = async (
+    id: string,
+    payload: Partial<IUser>
+): Promise<Partial<IUser> | null> => {
+    // Destructure only allowed fields
+    const { name, email, phone } = payload;
+
+    // Build update object
+    const updatePayload: Partial<IUser> = {};
+
+    if (name && name.trim()) updatePayload.name = name.trim();
+    if (email && email.trim()) updatePayload.email = email.trim();
+    if (phone && phone.trim()) updatePayload.phone = phone.trim();
+
+    if (Object.keys(updatePayload).length === 0) {
+        throw new ApiError(STATUS_CODE.BAD_REQUEST, "No valid fields to update.");
+    };
+
+    const updatedUser = await User.findByIdAndUpdate(id, updatePayload, {
+        new: true,
+    }).select("-password");
+
+
+    if (!updatedUser) {
+        throw new ApiError(STATUS_CODE.NOT_FOUND, "User not found.");
+    };
+
+    return updatedUser;
+};
+
+
+// DELETE MY-PROFILE SERVICE
+export const deleteMyProfileService = async (userId: string) => {
+    const deletedUser = await User.findByIdAndDelete(userId).select("-password");
+
+    if (!deletedUser) {
+        throw new ApiError(STATUS_CODE.NOT_FOUND, "User not found.");
+    };
+
+    return deletedUser;
+};
+
+
+// USER STATUS CHANGE SERVICE
+export const userStatusService = async (userId: string, isBlocked: boolean) => {
+    const user = await User.findById(userId);
+
+    if (!user) {
+        throw new ApiError(STATUS_CODE.NOT_FOUND, "User not found.");
+    };
+
+    user.isBlocked = isBlocked;
+    await user.save();
+
+    return { isBlocked: user.isBlocked };
+};
