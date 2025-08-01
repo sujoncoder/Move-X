@@ -110,20 +110,25 @@
 
 
 
-    DONE 🥙🥙🥙 --------- 
+    ✅ Already finish ✅
+
+    notfound route,
     global error handler,
-    notfoun route,
     customs status code,
     error class extends to apiError middleware,
+    zod validation,
+    catchAsync middleware,
+    senResponse middlware,
     check auth middleware,
     user register and login aftr login generate access token and verify that token,
     route protected,
     seed admin,
-    admin  can view all users,
-    admin  can view signle user by id,
-    admin  can update user role,
-    admin  can delete user,
-    admin  can block / unblock user,
+    
+    admin can view all users,
+    admin can get signle user by id,
+    admin can update user role,
+    admin can delete user,
+    admin can block / unblock user status,
 
 
     user can her profile

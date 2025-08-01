@@ -1,6 +1,6 @@
 
-// CUSTOMS HTTP_STATUS_CODE FILE
-export const STATUS_CODE = {
+// CUSTOMS HTTP_HTTP_STATUS FILE
+export const HTTP_STATUS = {
     // ✅ SUCCESS RESPONSE
     OK: 200,
     CREATED: 201,
@@ -23,4 +23,4 @@ export const STATUS_CODE = {
     GATEWAY_TIMEOUT: 504,
 } as const;
 
-export type HttpStatusCode = (typeof STATUS_CODE)[keyof typeof STATUS_CODE];
+export type HttpStatusCode = (typeof HTTP_STATUS)[keyof typeof HTTP_STATUS];

@@ -2,100 +2,27 @@
 import { NextFunction, Request, Response } from "express";
 
 import { catchAsync } from "../../utils/catchAsync";
-import { STATUS_CODE } from "../../constants/httpStatus";
+import { HTTP_STATUS } from "../../constants/httpStatus";
 
 import { createUserService, deleteMyProfileService, deleteUserByIdService, getAllUsersService, getMyProfileService, getUserByIdService, updateMyProfileService, updateUserRoleService, userStatusService } from "./user.service";
 import { sendResponse } from "../../utils/sendResponse";
 import { ApiError } from "../../errors/ApiError";
 
 
-// CREATE USER CONTROLLER
+// CREATE USER CONTROLLER - USER
 export const createUser = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const user = await createUserService(req.body);
 
     sendResponse(res, {
         success: true,
-        statusCode: STATUS_CODE.CREATED,
+        statusCode: HTTP_STATUS.CREATED,
         message: "User created successfully",
         data: user
     });
 });
 
 
-// GET ALL USERS CONTROLLER
-export const getAllUsers = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const result = await getAllUsersService();
-
-    sendResponse(res, {
-        success: true,
-        statusCode: STATUS_CODE.OK,
-        message: "All users retrieved successfully",
-        meta: result.meta,
-        data: result.data
-    });
-});
-
-
-// GET SINGLE USER CONTROLLER
-export const getUserById = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-
-    const user = await getUserByIdService(req.params.id);
-
-    sendResponse(res, {
-        success: true,
-        statusCode: STATUS_CODE.OK,
-        message: "User retrieved successfully",
-        data: user
-    });
-});
-
-
-// DELETE SINGLE USER CONTROLLER
-export const deleteUserById = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-
-    const user = await deleteUserByIdService(req.params.id);
-
-    sendResponse(res, {
-        success: true,
-        statusCode: STATUS_CODE.OK,
-        message: "User deleted successfully",
-        data: user
-    });
-});
-
-
-// UPDATE USER ROLE CONTROLLER
-export const updateUserRole = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-
-    const id = req.params.id;
-    const { role, ...rest } = req.body;
-
-    if (Object.keys(rest).length > 0) {
-        throw new ApiError(
-            STATUS_CODE.BAD_REQUEST,
-            "Only 'role' field is allowed to update"
-        );
-    };
-
-    if (!role || Object.keys(rest).length > 0) {
-        throw new ApiError(
-            STATUS_CODE.BAD_REQUEST,
-            "Only 'role' field is allowed to update"
-        );
-    };
-
-    const user = await updateUserRoleService({ id, role });
-
-    sendResponse(res, {
-        success: true,
-        statusCode: STATUS_CODE.OK,
-        message: "User role updated successfully",
-        data: user
-    });
-});
-
-
-// DELETE MY-PROFILE CONTROLLER
+// GET MY-PROFILE CONTROLLER - USER
 export const getMyProfile = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const userId = req.user?.userId;
 
@@ -103,14 +30,14 @@ export const getMyProfile = catchAsync(async (req: Request, res: Response, next:
 
     sendResponse(res, {
         success: true,
-        statusCode: STATUS_CODE.OK,
+        statusCode: HTTP_STATUS.OK,
         message: "Profile retrieved successfully",
         data: prifile,
     });
 });
 
 
-// UPDATE MY-PROFILE CONTROLLER
+// UPDATE MY-PROFILE CONTROLLER - USER
 export const updateMyProfile = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const userId = req.user.userId;
     const payload = req.body;
@@ -119,14 +46,14 @@ export const updateMyProfile = catchAsync(async (req: Request, res: Response, ne
 
     sendResponse(res, {
         success: true,
-        statusCode: STATUS_CODE.OK,
+        statusCode: HTTP_STATUS.OK,
         message: "Profile updated successfully",
         data: updatedUser,
     });
 });
 
 
-// DELETE MY-PROFILE CONTROLLER
+// DELETE MY-PROFILE CONTROLLER - USER
 export const deleteMyProfile = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const userId = req.user?.userId;
 
@@ -134,28 +61,103 @@ export const deleteMyProfile = catchAsync(async (req: Request, res: Response, ne
 
     sendResponse(res, {
         success: true,
-        statusCode: STATUS_CODE.OK,
+        statusCode: HTTP_STATUS.OK,
         message: "Profile deleted successfully",
         data: deletedUser,
     });
 });
 
 
-// USER STATUS CHANGE CONTROLLER
-export const userStatus = catchAsync(
+
+// -------------------- ADMIN CONTROLLER AREA ----------------------------
+
+
+
+// GET ALL USERS CONTROLLER - ADMIN
+export const getAllUsers = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const result = await getAllUsersService();
+
+    sendResponse(res, {
+        success: true,
+        statusCode: HTTP_STATUS.OK,
+        message: "All users retrieved successfully",
+        meta: result.meta,
+        data: result.data
+    });
+});
+
+
+// GET SINGLE USER CONTROLLER - ADMIN
+export const getUserById = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+
+    const user = await getUserByIdService(req.params.id);
+
+    sendResponse(res, {
+        success: true,
+        statusCode: HTTP_STATUS.OK,
+        message: "User retrieved successfully",
+        data: user
+    });
+});
+
+
+// DELETE SINGLE USER CONTROLLER - ADMIN
+export const deleteUserById = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+
+    const user = await deleteUserByIdService(req.params.id);
+
+    sendResponse(res, {
+        success: true,
+        statusCode: HTTP_STATUS.OK,
+        message: "User deleted successfully",
+        data: user
+    });
+});
+
+
+// UPDATE USER ROLE CONTROLLER - ADMIN
+export const updateUserRole = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+
+    const id = req.params.id;
+    const { role, ...rest } = req.body;
+
+    if (Object.keys(rest).length > 0) {
+        throw new ApiError(
+            HTTP_STATUS.BAD_REQUEST,
+            "Only 'role' field is allowed to update"
+        );
+    };
+
+    if (!role || Object.keys(rest).length > 0) {
+        throw new ApiError(
+            HTTP_STATUS.BAD_REQUEST,
+            "Only 'role' field is allowed to update"
+        );
+    };
+
+    const user = await updateUserRoleService({ id, role });
+
+    sendResponse(res, {
+        success: true,
+        statusCode: HTTP_STATUS.OK,
+        message: "User role updated successfully",
+        data: user
+    });
+});
+
+
+// USER STATUS CHANGE CONTROLLER - ADMIN
+export const userStatusChange = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
 
         const userId = req.params.id;
         const { isBlocked } = req.body;
 
-
         const result = await userStatusService(userId, isBlocked);
-
-
 
         sendResponse(res, {
             success: true,
-            statusCode: STATUS_CODE.OK,
+            statusCode: HTTP_STATUS.OK,
             message: result?.isBlocked
                 ? "User has been blocked successfully."
                 : "User has been unblocked successfully.",
@@ -163,4 +165,3 @@ export const userStatus = catchAsync(
         });
     }
 );
-
