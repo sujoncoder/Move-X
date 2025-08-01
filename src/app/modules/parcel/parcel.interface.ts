@@ -1,7 +1,6 @@
 import { Types } from "mongoose";
 
 
-
 export enum ParcelType {
     DOCUMENT = "DOCUMENT",
     BOX = "BOX",

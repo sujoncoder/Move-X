@@ -4,11 +4,9 @@ import { deliveryAddressField, feeField, parcelTypeField, receiverField, weightF
 
 // CREATE PARCEL ZOD SCHEMA
 export const createParcelZodSchema = z.object({
-    body: z.object({
-        receiver: receiverField,
-        parcelType: parcelTypeField,
-        weight: weightField,
-        fee: feeField,
-        deliveryAddress: deliveryAddressField,
-    }),
+    receiver: receiverField,
+    parcelType: parcelTypeField,
+    weight: weightField,
+    fee: feeField,
+    deliveryAddress: deliveryAddressField,
 });

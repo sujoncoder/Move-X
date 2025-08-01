@@ -83,54 +83,35 @@
 ----------------------------
 
 🧑‍💻 Auth:
-    → POST - /api/v1/auth/register  
-    → POST - /api/v1/auth/login  
+    → POST - /api/v1/auth/register              -> Create user
+    → POST - /api/v1/auth/login                 -> Login user
+
+
+💁 User:
+    → GET    - /api/v1/users/my-profile       -> User can views her own profile
+    → PATCH  - /api/v1/users/my-profile       -> User can update her profile without role,status
+    → DELETE - /api/v1/users/my-profile       -> User can delete her profile
+
 
 👤 User (Admin only):
-    → GET    - /api/v1/users
-    → PATCH  - /api/v1/users/block/:id  
-    → PATCH  - /api/v1/users/unblock/:id  
+    → GET    - /api/v1/users                    -> Get all users by admin
+    → GET  - /api/v1/users/:id                  -> Get single user by admin
+    → PATCH  - /api/v1/users/status/:id         -> Update user status by admin (block/unblock)
+    → DELETE  - /api/v1/users/status/:id        -> Delete a user using ID by admin
+
 
 📦 Parcel:
-    → GET    - /api/v1/parcels/me               → Sender views their parcels  
-    → POST   - /api/v1/parcels                  → Sender creates parcel  
-    → PATCH  - /api/v1/parcels/cancel/:id       → Sender cancels their parcel  
-    → GET    - /api/v1/parcels/incoming         → Receiver views incoming parcels  
-    → PATCH  - /api/v1/parcels/confirm/:id      → Receiver confirms delivery  
-    → GET    - /api/v1/parcels/:id/status-log   → View status logs of a parcel  
-    → PATCH  - /api/v1/parcels/status/:id       → Admin updates parcel status  
-    → GET    - /api/v1/parcels                  → Admin views all parcels (with filters)
+    → GET    - /api/v1/parcels/me               -> Sender and Receiver views their parcels
+    → GET    - /api/v1/parcels/incoming         -> Receiver views incoming parcels
+    → POST   - /api/v1/parcels/create-parcel    -> Sender creates parcel
+    → PATCH  - /api/v1/parcels/:id/cancel       -> Sender cancels their parcel (Sender)
+    → PATCH  - /api/v1/parcels/confirm/:id      -> Receiver confirms delivery  
+    → GET    - /api/v1/parcels/:id/status-log   -> View status logs of a parcel  
+    → PATCH  - /api/v1/parcels/:id/status       -> Admin updates parcel status  
+    → GET    - /api/v1/parcels                  -> Admin views all parcels (with filters)
 
 
-
-
-
-
-
-
-
-
-    ✅ Already finish ✅
-
-    notfound route,
-    global error handler,
-    customs status code,
-    error class extends to apiError middleware,
-    zod validation,
-    catchAsync middleware,
-    senResponse middlware,
-    check auth middleware,
-    user register and login aftr login generate access token and verify that token,
-    route protected,
-    seed admin,
-    
-    admin can view all users,
-    admin can get signle user by id,
-    admin can update user role,
-    admin can delete user,
-    admin can block / unblock user status,
-
-
-    user can her profile
-    user can update her profile,
-    user can delete her profile,
+REMAINING
+   → GET /parcels/:id (get single parcel)	  -> Add
+   → POST - /api/v1/auth/refresh-token        -> Issue new access token
+   → POST - /api/v1/auth/logout               -> Invalidate refresh token (optional)

@@ -1,5 +1,6 @@
 import { Schema, model } from "mongoose";
 import { IParcel, ParcelStatus, ParcelType } from "./parcel.interface";
+import { generateTrackingId } from "../../utils/generateTrackingId";
 
 const trackingEventSchema = new Schema(
     {
@@ -28,6 +29,8 @@ const parcelSchema = new Schema<IParcel>(
         trackingId: {
             type: String,
             unique: true,
+            required: true,
+            default: generateTrackingId()
         },
         sender: {
             type: Schema.Types.ObjectId,
