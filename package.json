@@ -4,6 +4,7 @@
   "description": "A parcel delivery system",
   "main": "server.ts",
   "scripts": {
+    "start": "node ./dist/server.js",
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
     "lint": "npx eslint ./src",
