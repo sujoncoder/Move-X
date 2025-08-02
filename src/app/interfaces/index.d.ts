@@ -1,7 +1,7 @@
 import { JwtPayload } from "jsonwebtoken";
 
 
-// INJECT USER INTO REQUEST ===> EXPRES
+// INJECT USER INTO REQUEST ===> EXPRESS
 declare global {
     namespace Express {
         interface Request {

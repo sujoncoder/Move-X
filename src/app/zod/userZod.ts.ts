@@ -1,7 +1,7 @@
 import z from "zod";
 
 
-// COMMON ZOD FIELDS
+// ZOD FIELDS
 export const nameField = z
     .string({
         error: (issue) =>

@@ -1,15 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// src/modules/parcel/parcel.service.ts
-import { Parcel } from "./parcel.model";
-import { IParcel, ParcelStatus } from "./parcel.interface";
-
-import { generateTrackingId } from "../../utils/generateTrackingId";
 import { ApiError } from "../../errors/ApiError";
 import { HTTP_STATUS } from "../../constants/httpStatus";
 import { addTrackingEvent } from "../../utils/addTrackingEvent";
+import { generateTrackingId } from "../../utils/generateTrackingId";
+
+import { Parcel } from "./parcel.model";
+import { IParcel, ParcelStatus } from "./parcel.interface";
 
 
-// CREATE PARCEL SERVICE
+
+// ------------------------- SENDER SERVICE ---------------------------- //
+
+// CREATE NEW PARCEL SERVICE - (SENDER)
 export const createParcelService = async (payload: IParcel) => {
     let trackingId = "";
 
@@ -26,7 +28,7 @@ export const createParcelService = async (payload: IParcel) => {
 };
 
 
-// GET PARCEL SERVICE
+// GET PARCEL SERVICE - (SENDER, RECEIVER)
 export const getMyParcelService = async (userId: string) => {
     const parcels = await Parcel.find({
         $or: [
@@ -39,17 +41,7 @@ export const getMyParcelService = async (userId: string) => {
 };
 
 
-// GET RECEIVER PARCEL SERVICE
-export const getReceiverParcelService = async (userId: string) => {
-    const parcels = await Parcel.find({
-        receiver: userId
-    });
-
-    return parcels;
-};
-
-
-// CANCEL PARCEL SERVICE
+// CANCEL PARCEL SERVICE - (SENDER)
 export const cancelParcelService = async (parcelId: string, userId: string) => {
     const parcel = await Parcel.findById(parcelId);
 
@@ -76,60 +68,20 @@ export const cancelParcelService = async (parcelId: string, userId: string) => {
 };
 
 
-// PARCEL STATUS CHANGE SERVICE
-export const parcelStatusUpdateService = async (
-    parcelId: string,
-    newStatus: ParcelStatus,
-    location: string
-) => {
-    const parcel = await Parcel.findById(parcelId);
 
-    if (!parcel) {
-        throw new ApiError(HTTP_STATUS.NOT_FOUND, 'Parcel not found');
-    };
+// ------------------------- RECEIVER SERVICE ---------------------------- //
 
-    if (
-        parcel.currentStatus === ParcelStatus.DELIVERED ||
-        parcel.currentStatus === ParcelStatus.CANCELLED
-    ) {
-        throw new ApiError(
-            HTTP_STATUS.BAD_REQUEST,
-            'Admin cannot change status of a delivered or cancelled parcel.'
-        );
-    };
+// GET RECEIVER PARCELS SERVICE - (RECEIVER)
+export const getReceiverParcelService = async (userId: string) => {
+    const parcels = await Parcel.find({
+        receiver: userId
+    });
 
-    parcel.currentStatus = newStatus;
-
-    addTrackingEvent(parcel, newStatus, location);
-
-    await parcel.save();
-
-    return parcel;
+    return parcels;
 };
 
 
-// GET PARCEL STATUS LOG SERVICE
-export const getParcelStatusLogService = async (parcelId: string, userId: string, userRole: string) => {
-    const parcel = await Parcel.findById(parcelId);
-
-    if (!parcel) {
-        throw new ApiError(HTTP_STATUS.NOT_FOUND, 'Parcel not found.');
-    };
-
-    const userRoleLower = userRole.toLowerCase();
-    const isAdmin = userRoleLower === 'admin';
-    const isSender = parcel.sender.toString() === userId;
-    const isReceiver = parcel.receiver.toString() === userId;
-
-    if (!isSender && !isReceiver && !isAdmin) {
-        throw new ApiError(HTTP_STATUS.FORBIDDEN, 'You are not authorized to view this parcel’s status log.');
-    };
-
-    return parcel.trackingEvents;
-};
-
-
-// CONFIRM DELIVERED SERVICE
+// CONFIRM DELIVERED SERVICE - (RECEIVER)
 export const confirmDeliveredService = async (
     parcelId: string,
     receiverId: string
@@ -168,8 +120,41 @@ export const confirmDeliveredService = async (
 };
 
 
+// ------------------------- ADMIN SERVICE ---------------------------- //
 
-// GET ALL PARCEL SERVICE
+// PARCEL STATUS CHANGE SERVICE - (ADMIN)
+export const parcelStatusUpdateService = async (
+    parcelId: string,
+    newStatus: ParcelStatus,
+    location: string
+) => {
+    const parcel = await Parcel.findById(parcelId);
+
+    if (!parcel) {
+        throw new ApiError(HTTP_STATUS.NOT_FOUND, 'Parcel not found');
+    };
+
+    if (
+        parcel.currentStatus === ParcelStatus.DELIVERED ||
+        parcel.currentStatus === ParcelStatus.CANCELLED
+    ) {
+        throw new ApiError(
+            HTTP_STATUS.BAD_REQUEST,
+            'Admin cannot change status of a delivered or cancelled parcel.'
+        );
+    };
+
+    parcel.currentStatus = newStatus;
+
+    addTrackingEvent(parcel, newStatus, location);
+
+    await parcel.save();
+
+    return parcel;
+};
+
+
+// GET ALL PARCELS SERVICE - (ADMIN)
 interface IParcelQuery {
     status?: string;
     sender?: string;
@@ -205,4 +190,52 @@ export const getAllParcelsService = async (query: IParcelQuery) => {
         },
         data: parcels,
     };
+};
+
+
+// GET PARCELS STATUS-LOG HISTORY SERVICE - (ADMIN, SENDER, RECEIVER)
+export const getSingleParcelService = async (
+    parcelId: string,
+    userId: string,
+    userRole: string
+) => {
+    const parcel = await Parcel.findById(parcelId)
+        .populate('sender', 'name phone email role')
+        .populate('receiver', 'name phone email role');
+
+    if (!parcel) {
+        throw new ApiError(HTTP_STATUS.NOT_FOUND, 'Parcel not found!');
+    }
+
+    const role = userRole.toLowerCase();
+    const isAdmin = role === 'admin';
+    const isSender = parcel.sender.toString() === userId;
+    const isReceiver = parcel.receiver.toString() === userId;
+
+    if (!isAdmin && !isSender && !isReceiver) {
+        throw new ApiError(HTTP_STATUS.FORBIDDEN, 'You are not authorized to view this parcel.');
+    }
+
+    return parcel;
+};
+
+
+// GET PARCELS STATUS-LOG HISTORY SERVICE - (ADMIN, SENDER, RECEIVER)
+export const getParcelStatusLogService = async (parcelId: string, userId: string, userRole: string) => {
+    const parcel = await Parcel.findById(parcelId);
+
+    if (!parcel) {
+        throw new ApiError(HTTP_STATUS.NOT_FOUND, 'Parcel not found.');
+    };
+
+    const userRoleLower = userRole.toLowerCase();
+    const isAdmin = userRoleLower === 'admin';
+    const isSender = parcel.sender.toString() === userId;
+    const isReceiver = parcel.receiver.toString() === userId;
+
+    if (!isSender && !isReceiver && !isAdmin) {
+        throw new ApiError(HTTP_STATUS.FORBIDDEN, 'You are not authorized to view this parcel’s status log.');
+    };
+
+    return parcel.trackingEvents;
 };

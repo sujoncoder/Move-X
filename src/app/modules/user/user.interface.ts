@@ -1,13 +1,15 @@
-// TYPESCRIPT ENUM
+import { Types } from "mongoose";
+
+// ROLE ENUM TYPE
 export enum Role {
     SENDER = "SENDER",
     RECEIVER = "RECEIVER",
     ADMIN = "ADMIN"
 };
 
-
-// TYPESCRIPT INTERFACE
+// USER TYPE
 export interface IUser {
+    _id?: Types.ObjectId;
     name: string;
     email: string;
     phone: string;

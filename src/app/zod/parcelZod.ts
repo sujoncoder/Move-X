@@ -2,7 +2,7 @@ import { z } from "zod";
 import { ParcelType } from "../modules/parcel/parcel.interface";
 
 
-
+// PARCEL ZOD FIELDS
 export const receiverField = z
     .string({ error: "Receiver ID must be a string" })
     .min(1, { error: "Receiver ID cannot be empty" });

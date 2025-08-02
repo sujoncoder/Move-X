@@ -1,13 +1,17 @@
 import { Request, Response } from "express";
 
-import { cancelParcelService, confirmDeliveredService, createParcelService, getAllParcelsService, getMyParcelService, getParcelStatusLogService, getReceiverParcelService, parcelStatusUpdateService } from "./parcel.service";
+import { catchAsync } from "../../utils/catchAsync";
 import { sendResponse } from "../../utils/sendResponse";
 import { HTTP_STATUS } from "../../constants/httpStatus";
-import { catchAsync } from "../../utils/catchAsync";
+
+import { cancelParcelService, confirmDeliveredService, createParcelService, getAllParcelsService, getMyParcelService, getParcelStatusLogService, getReceiverParcelService, getSingleParcelService, parcelStatusUpdateService } from "./parcel.service";
 
 
 
-// CREATE PARCEL CONTROLLER
+// ------------------------- SENDER CONTROLLER ---------------------------- //
+
+
+// CREATE NEW PARCEL CONTROLLER - (SENDER)
 export const createParcel = catchAsync(async (req: Request, res: Response) => {
 
     const parcelData = req.body;
@@ -24,7 +28,7 @@ export const createParcel = catchAsync(async (req: Request, res: Response) => {
 });
 
 
-// GET MY PARCEL CONTROLLER
+// GET MY PARCEL CONTROLLER - (SENDER, RECEIVER)
 export const getMyParcel = catchAsync(async (req: Request, res: Response) => {
     const userId = req.user.userId;
 
@@ -42,7 +46,7 @@ export const getMyParcel = catchAsync(async (req: Request, res: Response) => {
 });
 
 
-// CANCEL PARCEL CONTROLLER
+// CANCEL PARCEL CONTROLLER - (SENDER)
 export const cancelParcel = catchAsync(async (req: Request, res: Response) => {
     const parcelId = req.params.id;
     const userId = req.user.userId;
@@ -58,39 +62,10 @@ export const cancelParcel = catchAsync(async (req: Request, res: Response) => {
 });
 
 
-// PARCEL STATUS CHANGE CONTROLLER
-export const parcelStatusChange = catchAsync(async (req: Request, res: Response) => {
-    const { id } = req.params;
-    const { status, location } = req.body;
-
-    const result = await parcelStatusUpdateService(id, status, location);
-
-    res.status(200).json({
-        success: true,
-        message: 'Parcel status updated successfully',
-        data: result,
-    });
-});
+// ------------------------- RECEIVER CONTROLLER ---------------------------- //
 
 
-// GET PARCEL STATUS-LOG CONTROLLER
-export const getParcelStatusLog = async (req: Request, res: Response) => {
-    const parcelId = req.params.id;
-    const userId = req.user.userId;
-    const userRole = req.user.role;
-
-    const statusLog = await getParcelStatusLogService(parcelId, userId, userRole);
-
-    sendResponse(res, {
-        statusCode: 200,
-        success: true,
-        message: 'Parcel status log retrieved successfully.',
-        data: statusLog,
-    });
-};
-
-
-// RECEIVER CONFIRM DELIVERY CONTROLLER
+// RECEIVER CONFIRM DELIVERY CONTROLLER - (RECEIVER)
 export const confirmDelivered = async (req: Request, res: Response) => {
     const parcelId = req.params.id;
     const receiverId = req.user.userId;
@@ -105,22 +80,7 @@ export const confirmDelivered = async (req: Request, res: Response) => {
 };
 
 
-// GET ALL PARCELS CONTROLLER
-export const getAllParcels = catchAsync(
-    async (req: Request, res: Response) => {
-        const parcels = await getAllParcelsService(req.query);
-
-        sendResponse(res, {
-            statusCode: HTTP_STATUS.OK,
-            success: true,
-            message: 'Parcels retrieved successfully!',
-            data: parcels,
-        });
-    }
-);
-
-
-// SENDER PARCEL HISTORY CONTROLLER
+// PARCEL HISTORY CONTROLLER - (RECEIVER)
 export const getReceiverParcel = catchAsync(async (req: Request, res: Response) => {
     const userId = req.user.userId;
 
@@ -136,3 +96,69 @@ export const getReceiverParcel = catchAsync(async (req: Request, res: Response) 
         data: myParcel
     });
 });
+
+
+// ------------------------- ADMIN CONTROLLER ---------------------------- //
+
+
+// GET ALL PARCELS CONTROLLER - (ADMIN)
+export const getAllParcels = catchAsync(
+    async (req: Request, res: Response) => {
+        const parcels = await getAllParcelsService(req.query);
+
+        sendResponse(res, {
+            statusCode: HTTP_STATUS.OK,
+            success: true,
+            message: 'Parcels retrieved successfully!',
+            data: parcels,
+        });
+    }
+);
+
+
+// UPDATE PARCEL STATUS CONTROLLER - (ADMIN)
+export const parcelStatusChange = catchAsync(async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const { status, location } = req.body;
+
+    const result = await parcelStatusUpdateService(id, status, location);
+
+    res.status(200).json({
+        success: true,
+        message: 'Parcel status updated successfully',
+        data: result,
+    });
+});
+
+
+// GET SINGLE PARCEL CONTROLLER - (ADMIN, SENDER, RECEIVER)
+export const getSingleParcel = async (req: Request, res: Response) => {
+    const parcelId = req.params.id;
+    const userId = req.user._id;
+    const userRole = req.user.role;
+
+    const parcel = await getSingleParcelService(parcelId, userId, userRole);
+
+    res.status(200).json({
+        success: true,
+        message: 'Parcel fetched successfully!',
+        data: parcel,
+    });
+};
+
+
+// GET PARCEL STATUS-LOG HISTORY CONTROLLER - (ADMIN, SENDER, RECEIVER)
+export const getParcelStatusLog = async (req: Request, res: Response) => {
+    const parcelId = req.params.id;
+    const userId = req.user.userId;
+    const userRole = req.user.role;
+
+    const statusLog = await getParcelStatusLogService(parcelId, userId, userRole);
+
+    sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: 'Parcel status log retrieved successfully.',
+        data: statusLog,
+    });
+};

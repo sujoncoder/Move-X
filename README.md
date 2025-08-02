@@ -32,6 +32,8 @@ A Role-based RESTful API for managing parcel deliveries, built with **Express.js
 |--------|----------|-------------|
 | POST | `/auth/register` | Register a new user |
 | POST | `/auth/login` | Login existing user |
+| POST | `/auth/refresh-token` | Get new access token |
+| POST | `/auth/logout` | Logout user |
 
 ---
 
@@ -69,9 +71,9 @@ A Role-based RESTful API for managing parcel deliveries, built with **Express.js
 ### 📦 Parcel (Admin)
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| PATCH | `/parcels/:id/status` | Update parcel status |
 | GET | `/parcels` | View all parcels with filters |
 | GET | `/parcels/:id` | View single parcel (details) |
+| PATCH | `/parcels/:id/status` | Update parcel status |
 
 ---
 

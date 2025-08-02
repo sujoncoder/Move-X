@@ -1,6 +1,7 @@
 import { Types } from "mongoose";
 
 
+// PARCEL TYPE ENUM
 export enum ParcelType {
     DOCUMENT = "DOCUMENT",
     BOX = "BOX",
@@ -8,6 +9,7 @@ export enum ParcelType {
     OTHER = "OTHER",
 };
 
+// PARCEL STATUS ENUM
 export enum ParcelStatus {
     REQUESTED = "REQUESTED",
     IN_TRANSIT = "IN_TRANSIT",
@@ -15,12 +17,14 @@ export enum ParcelStatus {
     CANCELLED = "CANCELLED",
 };
 
+// TYPE TRACKING EVENT
 export interface ITrackingEvent {
     status: ParcelStatus;
     location: string;
     timestamp?: Date;
 };
 
+// PARCEL TYPE
 export interface IParcel {
     trackingId?: string;
     sender: Types.ObjectId;

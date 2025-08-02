@@ -1,15 +1,15 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import bcrypt from "bcryptjs";
 
-import { HTTP_STATUS } from "../../constants/httpStatus";
+import { SECRET } from "../../config/env";
+import { User } from "../user/user.model";
 import { ApiError } from "../../errors/ApiError";
 import { IUser, Role } from "../user/user.interface";
-import { User } from "../user/user.model";
-import { SECRET } from "../../config/env";
+import { HTTP_STATUS } from "../../constants/httpStatus";
 
 
 
-// CREATE USER SERVICE - USER
+// CREATE NEW USER SERVICE - (USER)
 export const createUserService = async (payload: Partial<IUser>) => {
     const { email, password, ...rest } = payload;
 
@@ -27,13 +27,13 @@ export const createUserService = async (payload: Partial<IUser>) => {
         ...rest,
     });
 
-    const { password: noPass, ...userWithOutPassword } = user.toObject();
+    const { password: pass, ...userWithOutPassword } = user.toObject();
 
     return userWithOutPassword;
 };
 
 
-// GET MY-PROFILE SERVICE - USER
+// GET MY-PROFILE SERVICE - (USER)
 export const getMyProfileService = async (userId: string) => {
     const user = await User.findById(userId).select("-password");
 
@@ -45,7 +45,7 @@ export const getMyProfileService = async (userId: string) => {
 };
 
 
-// UPDATE MY-PROFILE SERVICE - USER
+// UPDATE MY-PROFILE SERVICE - (USER)
 export const updateMyProfileService = async (
     id: string,
     payload: Partial<IUser>
@@ -77,7 +77,7 @@ export const updateMyProfileService = async (
 };
 
 
-// DELETE MY-PROFILE SERVICE - USER
+// DELETE MY-PROFILE SERVICE - (USER)
 export const deleteMyProfileService = async (userId: string) => {
     const deletedUser = await User.findByIdAndDelete(userId).select("-password");
 
@@ -90,13 +90,12 @@ export const deleteMyProfileService = async (userId: string) => {
 
 
 
-
 // -------------------- ADMIN SERVICE AREA ----------------------------
 
 
 
 
-// GET ALL USERS SERVICE - ADMIN
+// GET ALL USERS SERVICE - (ADMIN)
 export const getAllUsersService = async () => {
     const users = await User.find({ isBlocked: { $ne: true } }).select("-password");
 
@@ -111,7 +110,7 @@ export const getAllUsersService = async () => {
 };
 
 
-// GET SINGLE USER SERVICE - ADMIN
+// GET SINGLE USER SERVICE - (ADMIN)
 export const getUserByIdService = async (id: string) => {
     const user = await User.findById(id).select("-password");
 
@@ -123,7 +122,7 @@ export const getUserByIdService = async (id: string) => {
 };
 
 
-// DELETE SIGNLE USER SERVICE - ADMIN
+// DELETE SIGNLE USER SERVICE - (ADMIN)
 export const deleteUserByIdService = async (id: string) => {
     const user = await User.findByIdAndDelete(id).select("-password");
 
@@ -135,7 +134,7 @@ export const deleteUserByIdService = async (id: string) => {
 };
 
 
-// UPDATE USER ROLE SERVICE - ADMIN
+// UPDATE USER ROLE SERVICE - (ADMIN)
 interface payloadType {
     id: string;
     role: Role
@@ -156,7 +155,7 @@ export const updateUserRoleService = async ({ id, role }: payloadType) => {
 };
 
 
-// USER STATUS CHANGE SERVICE - ADMIN
+// UPDATE USER STATUS CHANGE SERVICE - (ADMIN)
 export const userStatusService = async (userId: string, isBlocked: boolean) => {
     const user = await User.findById(userId);
 

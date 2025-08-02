@@ -1,7 +1,12 @@
 import { Schema, model } from "mongoose";
-import { IParcel, ParcelStatus, ParcelType } from "./parcel.interface";
+
 import { generateTrackingId } from "../../utils/generateTrackingId";
 
+import { IParcel, ParcelStatus, ParcelType } from "./parcel.interface";
+
+
+
+// EMBEDED SCHEMA
 const trackingEventSchema = new Schema(
     {
         status: {

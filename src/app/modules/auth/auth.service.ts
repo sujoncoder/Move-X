@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 
@@ -7,6 +8,7 @@ import { IUser } from "../user/user.interface";
 import { generateToken } from "../../utils/jwt";
 import { ApiError } from "../../errors/ApiError";
 import { HTTP_STATUS } from "../../constants/httpStatus";
+import { createNewAccessTokenWithRefreshToken, createUserTokens } from "../../utils/userTokens";
 
 
 
@@ -30,13 +32,23 @@ export const loginUserService = async (payload: Partial<IUser>) => {
         throw new ApiError(HTTP_STATUS.BAD_REQUEST, " incorrect password !")
     };
 
-    const jwtPayload = {
-        userId: isUserExist._id,
-        email: isUserExist.email,
-        role: isUserExist.role
+    const userToken = createUserTokens(isUserExist);
+
+    const { password: pass, ...rest } = isUserExist.toObject();
+
+    return {
+        accessToken: userToken.accessToken,
+        refreshToken: userToken.refreshToken,
+        user: rest
     };
+};
 
-    const accessToken = await generateToken(jwtPayload, SECRET.JWT_ACCESS_SECRET, SECRET.JWT_ACCESS_EXPIRES);
 
-    return { accessToken };
+// GET NEW ACCESS TOKEN SERVICE
+export const getNewAccessTokenService = async (refreshToken: string) => {
+    const newAccessToken = await createNewAccessTokenWithRefreshToken(refreshToken);
+
+    return {
+        accessToken: newAccessToken
+    };
 };

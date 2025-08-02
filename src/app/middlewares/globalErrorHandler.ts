@@ -1,26 +1,23 @@
-/* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextFunction, Request, Response } from "express";
+
+import { SECRET } from "../config/env";
+import { ApiError } from "../errors/ApiError";
+import { TErrorSources } from "../interfaces/error.types";
+import { handlerZodError } from "../helpers/handlerZodError";
 import { handleCastError } from "../helpers/handleCastError";
 import { handlerDuplicateError } from "../helpers/handleDuplicateError";
 import { handlerValidationError } from "../helpers/handlerValidationError";
-import { handlerZodError } from "../helpers/handlerZodError";
-import { TErrorSources } from "../interfaces/error.types";
-import { SECRET } from "../config/env";
-import { ApiError } from "../errors/ApiError";
 
 
 
 // GLOBAL ERROR HANDLER MIDDLEWARE
 export const globalErrorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
-    // if (SECRET.NODE_ENV === "development") {
-    //     console.log(err);
-    // };
 
-    let errorSources: TErrorSources[] = []
-    let statusCode = 500
-    let message = "Something Went Wrong!!"
+    let errorSources: TErrorSources[] = [];
+    let statusCode = 500;
+    let message = "Something Went Wrong!!";
 
     if (err.code === 11000) {
         const simplifiedError = handlerDuplicateError(err)

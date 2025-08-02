@@ -1,8 +1,8 @@
 /* eslint-disable no-console */
 import mongoose from "mongoose";
 import chalk from "chalk";
-import { SECRET } from "./env";
 
+import { SECRET } from "./env";
 
 
 // DATABASE CONNECTION
@@ -15,5 +15,4 @@ const connectDB = async () => {
         process.exit(1);
     };
 };
-
 export default connectDB;

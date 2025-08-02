@@ -1,6 +1,8 @@
-import { ParcelStatus } from '../modules/parcel/parcel.interface';
 import { IParcel } from '../modules/parcel/parcel.interface';
+import { ParcelStatus } from '../modules/parcel/parcel.interface';
 
+
+// ADD TRACKING EVENT FUNCTION
 export const addTrackingEvent = (
     parcel: IParcel,
     status: ParcelStatus,

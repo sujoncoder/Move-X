@@ -1,7 +1,4 @@
---- PROJECT OVERVIEW --- 
-
 🚚🚚🚚 Move-X: Parcel Delivery API System 🚚🚚🚚
-
 
 ✅ ROLES
 ----------
@@ -29,54 +26,8 @@
     → Update parcel delivery status
     → (Optional) Assign delivery agents
 
-
-👨 USER SYSTEM DESIGN 👨
-----------------------------
-
-✅ Each user has:
-    → name, email, phone, password, role (sender/receiver/admin), isBlocked
-
-✅ Admin can:
-    → View all users  
-    → Block or unblock any user  
-
-
-📦 PARCEL LOGIC 📦
-----------------------------
-
-✅ Parcel Creation:
-    → Only created by Sender  
-
-✅ Required Parcel Fields:
-    → type, weight  
-    → sender info & receiver info  
-    → pickupAddress, deliveryAddress  
-    → delivery fee, expected delivery date  
-    → status (current), status logs (history)  
-    → unique tracking ID (Format: TRK-YYYYMMDD-xxxxxx)
-
 ✅ Status Lifecycle:
     → Requested → Approved → Dispatched → In Transit → Delivered  
-
-✅ Extra Logic:
-    → Can be canceled, blocked, returned, or rescheduled  
-    → Each parcel contains a `trackingEvents[]`:  
-       → Array of status logs: { location, timestamp, status, note }  
-
-✅ Fee Calculation (Optional):
-    → Based on weight, distance, or a flat rate  
-
-
-⚠️ BUSINESS RULES & VALIDATIONS ⚠️
------------------------------------
-
-→ Sender can cancel only if status === "Requested"  
-→ Receiver can confirm delivery only if status === "In Transit"  
-→ Blocked users are restricted from all features  
-→ Parcel status must follow a valid flow (no skipping steps)  
-→ All routes protected via:
-    → Role-check middleware  
-    → Ownership-check middleware  
 
 
 🧩 API DESIGN 🧩
@@ -85,6 +36,8 @@
 🧑‍💻 Auth:
     → POST - /api/v1/auth/register              -> Create user
     → POST - /api/v1/auth/login                 -> Login user
+    → POST - /api/v1/auth/logout                -> Logout user
+    → POST - /api/v1/auth/refresh-token        -> Issue new access token
 
 
 💁 User:
@@ -109,9 +62,4 @@
     → GET    - /api/v1/parcels/:id/status-log   -> View status logs of a parcel  
     → PATCH  - /api/v1/parcels/:id/status       -> Admin updates parcel status  
     → GET    - /api/v1/parcels                  -> Admin views all parcels (with filters)
-
-
-REMAINING
-   → GET /parcels/:id (get single parcel)	  -> Add
-   → POST - /api/v1/auth/refresh-token        -> Issue new access token
-   → POST - /api/v1/auth/logout               -> Invalidate refresh token (optional)
+    → GET    - /api/v1/parcels/:id              -> Get single parcel

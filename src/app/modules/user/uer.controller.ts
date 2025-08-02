@@ -1,15 +1,18 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { NextFunction, Request, Response } from "express";
 
+import { ApiError } from "../../errors/ApiError";
 import { catchAsync } from "../../utils/catchAsync";
+import { sendResponse } from "../../utils/sendResponse";
 import { HTTP_STATUS } from "../../constants/httpStatus";
 
 import { createUserService, deleteMyProfileService, deleteUserByIdService, getAllUsersService, getMyProfileService, getUserByIdService, updateMyProfileService, updateUserRoleService, userStatusService } from "./user.service";
-import { sendResponse } from "../../utils/sendResponse";
-import { ApiError } from "../../errors/ApiError";
 
 
-// CREATE USER CONTROLLER - USER
+
+// ---------------------- USER CONTROLLER ---------------------------- //
+
+// CREATE NEW USER CONTROLLER - (USER)
 export const createUser = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const user = await createUserService(req.body);
 
@@ -22,9 +25,9 @@ export const createUser = catchAsync(async (req: Request, res: Response, next: N
 });
 
 
-// GET MY-PROFILE CONTROLLER - USER
+// GET MY-PROFILE CONTROLLER - (USER)
 export const getMyProfile = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const userId = req.user?.userId;
+    const userId = req.user.userId;
 
     const prifile = await getMyProfileService(userId);
 
@@ -37,7 +40,7 @@ export const getMyProfile = catchAsync(async (req: Request, res: Response, next:
 });
 
 
-// UPDATE MY-PROFILE CONTROLLER - USER
+// UPDATE MY-PROFILE CONTROLLER - (USER)
 export const updateMyProfile = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const userId = req.user.userId;
     const payload = req.body;
@@ -68,12 +71,10 @@ export const deleteMyProfile = catchAsync(async (req: Request, res: Response, ne
 });
 
 
-
-// -------------------- ADMIN CONTROLLER AREA ----------------------------
-
+// ---------------------- ADMIN CONTROLLER ---------------------------- //
 
 
-// GET ALL USERS CONTROLLER - ADMIN
+// GET ALL USERS CONTROLLER - (ADMIN)
 export const getAllUsers = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const result = await getAllUsersService();
 
@@ -87,8 +88,8 @@ export const getAllUsers = catchAsync(async (req: Request, res: Response, next: 
 });
 
 
-// GET SINGLE USER CONTROLLER - ADMIN
-export const getUserById = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+// GET SINGLE USER CONTROLLER - (ADMIN)
+export const getUser = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
 
     const user = await getUserByIdService(req.params.id);
 
@@ -101,21 +102,27 @@ export const getUserById = catchAsync(async (req: Request, res: Response, next: 
 });
 
 
-// DELETE SINGLE USER CONTROLLER - ADMIN
-export const deleteUserById = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+// UPDATE USER STATUS CHANGE CONTROLLER - (ADMIN)
+export const userStatusChange = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
 
-    const user = await deleteUserByIdService(req.params.id);
+    const userId = req.params.id;
+    const { isBlocked } = req.body;
+
+    const result = await userStatusService(userId, isBlocked);
 
     sendResponse(res, {
         success: true,
         statusCode: HTTP_STATUS.OK,
-        message: "User deleted successfully",
-        data: user
+        message: result?.isBlocked
+            ? "User has been blocked successfully."
+            : "User has been unblocked successfully.",
+        data: result,
     });
-});
+}
+);
 
 
-// UPDATE USER ROLE CONTROLLER - ADMIN
+// UPDATE USER ROLE CONTROLLER - (ADMIN)
 export const updateUserRole = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
 
     const id = req.params.id;
@@ -146,22 +153,15 @@ export const updateUserRole = catchAsync(async (req: Request, res: Response, nex
 });
 
 
-// USER STATUS CHANGE CONTROLLER - ADMIN
-export const userStatusChange = catchAsync(
-    async (req: Request, res: Response, next: NextFunction) => {
+// DELETE SINGLE USER CONTROLLER - (ADMIN)
+export const deleteUser = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
 
-        const userId = req.params.id;
-        const { isBlocked } = req.body;
+    const user = await deleteUserByIdService(req.params.id);
 
-        const result = await userStatusService(userId, isBlocked);
-
-        sendResponse(res, {
-            success: true,
-            statusCode: HTTP_STATUS.OK,
-            message: result?.isBlocked
-                ? "User has been blocked successfully."
-                : "User has been unblocked successfully.",
-            data: result,
-        });
-    }
-);
+    sendResponse(res, {
+        success: true,
+        statusCode: HTTP_STATUS.OK,
+        message: "User deleted successfully",
+        data: user
+    });
+});

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-console */
-import bcrypt from "bcryptjs";
 import chalk from "chalk";
+import bcrypt from "bcryptjs";
 
 import { SECRET } from "../config/env";
 import { User } from "../modules/user/user.model";
