@@ -1,6 +1,6 @@
 import z from "zod";
 
-import { emailField, nameField, passwordField, phoneField } from "../../utils/zod";
+import { emailField, nameField, passwordField, phoneField } from "../../zod/userZod.ts";
 
 
 // CREATE USER ZOD SCHEMA

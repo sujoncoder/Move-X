@@ -4,8 +4,8 @@ import { Server } from "http";
 import app from "./app";
 import { SECRET } from "./app/config/env";
 import connectDB from "./app/config/database";
-import gracefulShutdown, { setServer } from "./app/config/shutdown";
 import { seedAdmin } from "./app/utils/seedAdmin";
+import gracefulShutdown, { setServer } from "./app/config/shutdown";
 
 
 let server: Server;
@@ -37,7 +37,3 @@ process.on("unhandledRejection", (error) => gracefulShutdown("Unhandled Rejectio
 // SIGNAL TERMINATION SIGTERM
 process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
 process.on("SIGINT", () => gracefulShutdown("SIGINT"));
-
-
-// START SERVER
-// startServer();

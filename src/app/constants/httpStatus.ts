@@ -1,13 +1,10 @@
-
-// CUSTOMS HTTP_STATUS_CODE FILE
-export const STATUS_CODE = {
-    // ✅ SUCCESS RESPONSE
+// CUSTOMS HTTP_STATUS_CODE
+export const HTTP_STATUS = {
     OK: 200,
     CREATED: 201,
     ACCEPTED: 202,
     NO_CONTENT: 204,
 
-    // ❌ CLIENT ERRORS
     BAD_REQUEST: 400,
     UNAUTHORIZED: 401,
     FORBIDDEN: 403,
@@ -15,7 +12,6 @@ export const STATUS_CODE = {
     CONFLICT: 409,
     UNPROCESSABLE_ENTITY: 422,
 
-    // 💥 SERVER ERRORR 
     INTERNAL_SERVER_ERROR: 500,
     NOT_IMPLEMENTED: 501,
     BAD_GATEWAY: 502,
@@ -23,4 +19,4 @@ export const STATUS_CODE = {
     GATEWAY_TIMEOUT: 504,
 } as const;
 
-export type HttpStatusCode = (typeof STATUS_CODE)[keyof typeof STATUS_CODE];
+export type HttpStatusCode = (typeof HTTP_STATUS)[keyof typeof HTTP_STATUS];

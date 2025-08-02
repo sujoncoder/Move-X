@@ -1,7 +1,4 @@
---- PROJECT OVERVIEW --- 
-
 🚚🚚🚚 Move-X: Parcel Delivery API System 🚚🚚🚚
-
 
 ✅ ROLES
 ----------
@@ -29,103 +26,40 @@
     → Update parcel delivery status
     → (Optional) Assign delivery agents
 
-
-👨 USER SYSTEM DESIGN 👨
-----------------------------
-
-✅ Each user has:
-    → name, email, phone, password, role (sender/receiver/admin), isBlocked
-
-✅ Admin can:
-    → View all users  
-    → Block or unblock any user  
-
-
-📦 PARCEL LOGIC 📦
-----------------------------
-
-✅ Parcel Creation:
-    → Only created by Sender  
-
-✅ Required Parcel Fields:
-    → type, weight  
-    → sender info & receiver info  
-    → pickupAddress, deliveryAddress  
-    → delivery fee, expected delivery date  
-    → status (current), status logs (history)  
-    → unique tracking ID (Format: TRK-YYYYMMDD-xxxxxx)
-
 ✅ Status Lifecycle:
     → Requested → Approved → Dispatched → In Transit → Delivered  
-
-✅ Extra Logic:
-    → Can be canceled, blocked, returned, or rescheduled  
-    → Each parcel contains a `trackingEvents[]`:  
-       → Array of status logs: { location, timestamp, status, note }  
-
-✅ Fee Calculation (Optional):
-    → Based on weight, distance, or a flat rate  
-
-
-⚠️ BUSINESS RULES & VALIDATIONS ⚠️
------------------------------------
-
-→ Sender can cancel only if status === "Requested"  
-→ Receiver can confirm delivery only if status === "In Transit"  
-→ Blocked users are restricted from all features  
-→ Parcel status must follow a valid flow (no skipping steps)  
-→ All routes protected via:
-    → Role-check middleware  
-    → Ownership-check middleware  
 
 
 🧩 API DESIGN 🧩
 ----------------------------
 
 🧑‍💻 Auth:
-    → POST - /api/v1/auth/register  
-    → POST - /api/v1/auth/login  
+    → POST - /api/v1/auth/register              -> Create user
+    → POST - /api/v1/auth/login                 -> Login user
+    → POST - /api/v1/auth/logout                -> Logout user
+    → POST - /api/v1/auth/refresh-token        -> Issue new access token
+
+
+💁 User:
+    → GET    - /api/v1/users/my-profile       -> User can views her own profile
+    → PATCH  - /api/v1/users/my-profile       -> User can update her profile without role,status
+    → DELETE - /api/v1/users/my-profile       -> User can delete her profile
+
 
 👤 User (Admin only):
-    → GET    - /api/v1/users
-    → PATCH  - /api/v1/users/block/:id  
-    → PATCH  - /api/v1/users/unblock/:id  
+    → GET    - /api/v1/users                    -> Get all users by admin
+    → GET  - /api/v1/users/:id                  -> Get single user by admin
+    → PATCH  - /api/v1/users/status/:id         -> Update user status by admin (block/unblock)
+    → DELETE  - /api/v1/users/status/:id        -> Delete a user using ID by admin
+
 
 📦 Parcel:
-    → GET    - /api/v1/parcels/me               → Sender views their parcels  
-    → POST   - /api/v1/parcels                  → Sender creates parcel  
-    → PATCH  - /api/v1/parcels/cancel/:id       → Sender cancels their parcel  
-    → GET    - /api/v1/parcels/incoming         → Receiver views incoming parcels  
-    → PATCH  - /api/v1/parcels/confirm/:id      → Receiver confirms delivery  
-    → GET    - /api/v1/parcels/:id/status-log   → View status logs of a parcel  
-    → PATCH  - /api/v1/parcels/status/:id       → Admin updates parcel status  
-    → GET    - /api/v1/parcels                  → Admin views all parcels (with filters)
-
-
-
-
-
-
-
-
-
-
-    DONE 🥙🥙🥙 --------- 
-    global error handler,
-    notfoun route,
-    customs status code,
-    error class extends to apiError middleware,
-    check auth middleware,
-    user register and login aftr login generate access token and verify that token,
-    route protected,
-    seed admin,
-    admin  can view all users,
-    admin  can view signle user by id,
-    admin  can update user role,
-    admin  can delete user,
-    admin  can block / unblock user,
-
-
-    user can her profile
-    user can update her profile,
-    user can delete her profile,
+    → GET    - /api/v1/parcels/me               -> Sender and Receiver views their parcels
+    → GET    - /api/v1/parcels/incoming         -> Receiver views incoming parcels
+    → POST   - /api/v1/parcels/create-parcel    -> Sender creates parcel
+    → PATCH  - /api/v1/parcels/:id/cancel       -> Sender cancels their parcel (Sender)
+    → PATCH  - /api/v1/parcels/confirm/:id      -> Receiver confirms delivery  
+    → GET    - /api/v1/parcels/:id/status-log   -> View status logs of a parcel  
+    → PATCH  - /api/v1/parcels/:id/status       -> Admin updates parcel status  
+    → GET    - /api/v1/parcels                  -> Admin views all parcels (with filters)
+    → GET    - /api/v1/parcels/:id              -> Get single parcel
