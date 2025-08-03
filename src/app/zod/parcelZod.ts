@@ -23,3 +23,9 @@ export const feeField = z
 export const deliveryAddressField = z
     .string({ error: "Delivery address must be a string" })
     .min(5, { error: "Delivery address must be at least 5 characters long" });
+
+export const deliveryDateField = z
+    .string({ error: "Delivery date must be a string" })
+    .regex(
+        /^\d{4}-\d{2}-\d{2}$/,
+        { message: "Delivery date must be in YYYY-MM-DD format" });

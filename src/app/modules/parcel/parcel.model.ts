@@ -64,6 +64,10 @@ const parcelSchema = new Schema<IParcel>(
             type: String,
             required: true,
         },
+        deliveryDate: {
+            type: Date,
+            required: true,
+        },
         currentStatus: {
             type: String,
             enum: Object.values(ParcelStatus),

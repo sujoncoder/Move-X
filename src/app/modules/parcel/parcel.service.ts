@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { User } from "../user/user.model";
 import { ApiError } from "../../errors/ApiError";
 import { HTTP_STATUS } from "../../constants/httpStatus";
 import { addTrackingEvent } from "../../utils/addTrackingEvent";
@@ -13,13 +14,18 @@ import { IParcel, ParcelStatus } from "./parcel.interface";
 
 // CREATE NEW PARCEL SERVICE - (SENDER)
 export const createParcelService = async (payload: IParcel) => {
-    let trackingId = "";
+    const receiverExists = await User.findOne({ _id: payload.receiver, role: "RECEIVER" });
 
+    if (!receiverExists) {
+        throw new ApiError(HTTP_STATUS.BAD_REQUEST, "Receiver ID is invalid or not a RECEIVER.");
+    };
+
+    let trackingId = "";
     while (true) {
         trackingId = generateTrackingId();
         const exists = await Parcel.findOne({ trackingId });
         if (!exists) break;
-    }
+    };
 
     payload.trackingId = trackingId;
 
@@ -47,19 +53,19 @@ export const cancelParcelService = async (parcelId: string, userId: string) => {
 
     if (!parcel) {
         throw new ApiError(HTTP_STATUS.NOT_FOUND, 'Parcel not found.');
-    }
+    };
 
     if (parcel.sender.toString() !== userId) {
         throw new ApiError(HTTP_STATUS.FORBIDDEN, 'You can only cancel your own parcels.');
-    }
+    };
 
     if (parcel.currentStatus === ParcelStatus.CANCELLED) {
         throw new ApiError(HTTP_STATUS.BAD_REQUEST, 'Parcel is already cancelled.');
-    }
+    };
 
     if (parcel.currentStatus !== ParcelStatus.REQUESTED) {
         throw new ApiError(HTTP_STATUS.BAD_REQUEST, 'Only requested parcels can be cancelled.');
-    }
+    };
 
     parcel.currentStatus = ParcelStatus.CANCELLED;
     await parcel.save();
@@ -125,28 +131,52 @@ export const confirmDeliveredService = async (
 // PARCEL STATUS CHANGE SERVICE - (ADMIN)
 export const parcelStatusUpdateService = async (
     parcelId: string,
+    userRole: string,
     newStatus: ParcelStatus,
     location: string
 ) => {
     const parcel = await Parcel.findById(parcelId);
 
     if (!parcel) {
-        throw new ApiError(HTTP_STATUS.NOT_FOUND, 'Parcel not found');
+        throw new ApiError(404, "Parcel not found!");
     };
 
-    if (
-        parcel.currentStatus === ParcelStatus.DELIVERED ||
-        parcel.currentStatus === ParcelStatus.CANCELLED
-    ) {
+    const currentStatus = parcel.currentStatus || ParcelStatus.REQUESTED;
+
+    // Flow map
+    const validNextStatus: Record<ParcelStatus, ParcelStatus> = {
+        REQUESTED: ParcelStatus.APPROVED,
+        APPROVED: ParcelStatus.DISPATCHED,
+        DISPATCHED: ParcelStatus.IN_TRANSIT,
+        IN_TRANSIT: ParcelStatus.DELIVERED,
+        DELIVERED: ParcelStatus.DELIVERED,
+        CANCELLED: ParcelStatus.CANCELLED,
+    };
+
+    const expectedNext = validNextStatus[currentStatus];
+
+    if (newStatus !== expectedNext) {
         throw new ApiError(
-            HTTP_STATUS.BAD_REQUEST,
-            'Admin cannot change status of a delivered or cancelled parcel.'
+            400,
+            `Invalid status transition. From ${currentStatus} you can only move to ${expectedNext}.`
         );
     };
 
-    parcel.currentStatus = newStatus;
+    if (newStatus === ParcelStatus.DELIVERED && userRole !== "RECEIVER") {
+        throw new ApiError(403, "Only the receiver can mark a parcel as DELIVERED.");
+    };
 
-    addTrackingEvent(parcel, newStatus, location);
+    if (userRole === "ADMIN" && newStatus === ParcelStatus.DELIVERED) {
+        throw new ApiError(403, "Admin is not allowed to mark a parcel as DELIVERED.");
+    };
+
+    // Save updated status
+    parcel.currentStatus = newStatus;
+    parcel.trackingEvents?.push({
+        status: newStatus,
+        location: location,
+        timestamp: new Date(),
+    });
 
     await parcel.save();
 
@@ -199,25 +229,33 @@ export const getSingleParcelService = async (
     userId: string,
     userRole: string
 ) => {
+
     const parcel = await Parcel.findById(parcelId)
         .populate('sender', 'name phone email role')
         .populate('receiver', 'name phone email role');
 
     if (!parcel) {
         throw new ApiError(HTTP_STATUS.NOT_FOUND, 'Parcel not found!');
-    }
+    };
 
     const role = userRole.toLowerCase();
+
     const isAdmin = role === 'admin';
-    const isSender = parcel.sender.toString() === userId;
-    const isReceiver = parcel.receiver.toString() === userId;
+    const isSender =
+        parcel.sender && parcel.sender._id?.toString() === userId;
+    const isReceiver =
+        parcel.receiver && parcel.receiver._id?.toString() === userId;
 
     if (!isAdmin && !isSender && !isReceiver) {
-        throw new ApiError(HTTP_STATUS.FORBIDDEN, 'You are not authorized to view this parcel.');
+        throw new ApiError(
+            HTTP_STATUS.FORBIDDEN,
+            'You are not authorized to view this parcel.'
+        );
     }
 
     return parcel;
 };
+
 
 
 // GET PARCELS STATUS-LOG HISTORY SERVICE - (ADMIN, SENDER, RECEIVER)

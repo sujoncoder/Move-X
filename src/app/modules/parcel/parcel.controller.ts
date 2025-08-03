@@ -5,6 +5,7 @@ import { sendResponse } from "../../utils/sendResponse";
 import { HTTP_STATUS } from "../../constants/httpStatus";
 
 import { cancelParcelService, confirmDeliveredService, createParcelService, getAllParcelsService, getMyParcelService, getParcelStatusLogService, getReceiverParcelService, getSingleParcelService, parcelStatusUpdateService } from "./parcel.service";
+import { ApiError } from "../../errors/ApiError";
 
 
 
@@ -13,8 +14,8 @@ import { cancelParcelService, confirmDeliveredService, createParcelService, getA
 
 // CREATE NEW PARCEL CONTROLLER - (SENDER)
 export const createParcel = catchAsync(async (req: Request, res: Response) => {
-
     const parcelData = req.body;
+
     parcelData.sender = req.user.userId;
 
     const result = await createParcelService(parcelData);
@@ -118,33 +119,51 @@ export const getAllParcels = catchAsync(
 
 // UPDATE PARCEL STATUS CONTROLLER - (ADMIN)
 export const parcelStatusChange = catchAsync(async (req: Request, res: Response) => {
-    const { id } = req.params;
+
+    const parcelId = req.params.id;
     const { status, location } = req.body;
 
-    const result = await parcelStatusUpdateService(id, status, location);
+    if (!status) {
+        throw new ApiError(400, "Status is required");
+    };
+
+    if (!location) {
+        throw new ApiError(400, "Location is required");
+    };
+
+    const updatedParcel = await parcelStatusUpdateService(
+        parcelId,
+        req.user.role,
+        status,
+        location
+    );
 
     res.status(200).json({
         success: true,
         message: 'Parcel status updated successfully',
-        data: result,
+        data: updatedParcel,
     });
 });
 
 
 // GET SINGLE PARCEL CONTROLLER - (ADMIN, SENDER, RECEIVER)
-export const getSingleParcel = async (req: Request, res: Response) => {
-    const parcelId = req.params.id;
-    const userId = req.user._id;
-    const userRole = req.user.role;
+export const getSingleParcel = catchAsync(
+    async (req: Request, res: Response) => {
+        const { id: parcelId } = req.params;
 
-    const parcel = await getSingleParcelService(parcelId, userId, userRole);
+        const userId = req.user?.userId;
+        const userRole = req.user?.role;
 
-    res.status(200).json({
-        success: true,
-        message: 'Parcel fetched successfully!',
-        data: parcel,
-    });
-};
+        const result = await getSingleParcelService(parcelId, userId, userRole);
+
+        sendResponse(res, {
+            statusCode: 200,
+            success: true,
+            message: 'Parcel fetched successfully!',
+            data: result,
+        });
+    }
+);
 
 
 // GET PARCEL STATUS-LOG HISTORY CONTROLLER - (ADMIN, SENDER, RECEIVER)
