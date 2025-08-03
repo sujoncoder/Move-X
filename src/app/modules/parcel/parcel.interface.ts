@@ -4,14 +4,20 @@ import { Types } from "mongoose";
 // PARCEL TYPE ENUM
 export enum ParcelType {
     DOCUMENT = "DOCUMENT",
-    BOX = "BOX",
+    ELECTRONICS = "ELECTRONICS",
+    CLOTHING = "CLOTHING",
+    FOOD = "FOOD",
     FRAGILE = "FRAGILE",
-    OTHER = "OTHER",
+    HEAVY = "HEAVY",
+    MEDICINE = "MEDICINE",
+    GENERAL = "GENERAL",
 };
 
 // PARCEL STATUS ENUM
 export enum ParcelStatus {
     REQUESTED = "REQUESTED",
+    APPROVED = "APPROVED",
+    DISPATCHED = "DISPATCHED",
     IN_TRANSIT = "IN_TRANSIT",
     DELIVERED = "DELIVERED",
     CANCELLED = "CANCELLED",
@@ -33,6 +39,7 @@ export interface IParcel {
     weight: number;
     fee: number;
     deliveryAddress: string;
+    deliveryDate: Date,
     currentStatus?: ParcelStatus;
     trackingEvents?: ITrackingEvent[];
     isBlocked?: boolean;

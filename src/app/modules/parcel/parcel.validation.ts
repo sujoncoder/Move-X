@@ -1,6 +1,7 @@
 import z from "zod";
 
-import { deliveryAddressField, feeField, parcelTypeField, receiverField, weightField } from "../../zod/parcelZod";
+import { deliveryAddressField, deliveryDateField, feeField, parcelTypeField, receiverField, weightField } from "../../zod/parcelZod";
+
 
 // CREATE PARCEL ZOD SCHEMA
 export const createParcelZodSchema = z.object({
@@ -9,4 +10,5 @@ export const createParcelZodSchema = z.object({
     weight: weightField,
     fee: feeField,
     deliveryAddress: deliveryAddressField,
+    deliveryDate: deliveryDateField,
 });

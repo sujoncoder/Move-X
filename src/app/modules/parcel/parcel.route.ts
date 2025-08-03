@@ -5,6 +5,7 @@ import { validateRequest } from "../../middlewares/validateRequest";
 
 import { createParcelZodSchema } from "./parcel.validation";
 import { createParcel, getMyParcel, cancelParcel, confirmDelivered, parcelStatusChange, getParcelStatusLog, getAllParcels, getReceiverParcel, getSingleParcel } from "./parcel.controller";
+import { Role } from "../user/user.interface";
 
 
 // PARCEL ROUTES
@@ -16,7 +17,7 @@ export const parcelRoutes = Router()
 
     .patch("/confirm/:id", checkAuth("RECEIVER"), confirmDelivered)
 
-    .get("/:id", checkAuth("ADMIN", "SENDER", "RECEIVER"), getSingleParcel)
+    .get("/:id", checkAuth(...Object.values(Role)), getSingleParcel)
     .patch("/:id/cancel", checkAuth("SENDER"), cancelParcel)
     .patch("/:id/status", checkAuth("ADMIN"), parcelStatusChange)
     .get("/:id/status-log", checkAuth("ADMIN", "SENDER", "RECEIVER"), getParcelStatusLog)
