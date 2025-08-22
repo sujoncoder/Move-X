@@ -1,24 +1,25 @@
 {
   "name": "move-x",
   "version": "1.0.0",
-  "description": "A parcel delivery system",
-  "main": "server.ts",
+  "description": "A Role-based RESTful API for managing parcel deliveries, built with **Express.js**, **TypeScript**, and **MongoDB**. This backend service supports different user roles (User and Admin) with secured authentication, parcel lifecycle management, and status tracking.",
+  "main": "index.js",
   "scripts": {
+    "start": "node ./dist/server.js",
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
     "lint": "npx eslint ./src",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [
-    "parcel",
-    "delivery",
-    "system",
-    "curier",
-    "delivery",
-    "system"
-  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sujoncoder/Move-X.git"
+  },
   "author": "Sujon Sheikh",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sujoncoder/Move-X/issues"
+  },
+  "homepage": "https://github.com/sujoncoder/Move-X#readme",
   "dependencies": {
     "bcryptjs": "^3.0.2",
     "cookie-parser": "^1.4.7",
@@ -26,12 +27,11 @@
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.16.5",
-    "zod": "^4.0.10"
+    "mongoose": "^8.17.0",
+    "zod": "^4.0.14"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
-    "@types/chalk": "^0.4.31",
     "@types/cookie-parser": "^1.4.9",
     "@types/cors": "^2.8.19",
     "@types/dotenv": "^6.1.1",
@@ -39,7 +39,6 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/mongoose": "^5.11.96",
     "@types/node": "^24.1.0",
-    "chalk": "^5.4.1",
     "eslint": "^9.32.0",
     "tsx": "^4.20.3",
     "typescript": "^5.8.3",

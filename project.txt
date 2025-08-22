@@ -1,0 +1,61 @@
+🚚🚚🚚 Move-X: Parcel Delivery API System 🚚🚚🚚
+
+✅ ROLES
+----------
+→ 🧍 Sender - Creates parcel delivery requests  
+→ 📥 Receiver - Receives parcels and confirms delivery  
+→ 🛡️ Admin - Manages users, parcels, and delivery statuses  
+
+
+👥 USER FUNCTIONALITIES 👥
+----------------------------
+
+🧍 Senders can:
+    → Create parcel delivery requests  
+    → Cancel parcels (only if not dispatched)  
+    → View all their parcels and status logs  
+
+📥 Receivers can:
+    → View incoming parcels  
+    → Confirm parcel delivery  
+    → View delivery history  
+
+🛡️ Admins can:
+    → View and manage all users and parcels
+    → Block or unblock users or parcels 
+    → Update parcel delivery status
+    → (Optional) Assign delivery agents
+
+✅ Status Lifecycle:
+    → Requested → Approved → Dispatched → In Transit → Delivered  
+
+
+✅ API-ENDPOINT ✅
+----------------------------
+⛑️ AUTH ROUTE
+    # POST - /api/v1/auth/register              -> Create user
+    # POST - /api/v1/auth/login                 -> Login user
+    # POST - /api/v1/auth/logout                -> Logout user
+    # POST - /api/v1/auth/refresh-token         -> Generate new access token
+
+🙎 USER ROUTE
+    # GET    - /api/v1/users/my-profile       -> User can views her own profile
+    # PATCH  - /api/v1/users/my-profile       -> User can update her profile without (role, status)
+    # DELETE - /api/v1/users/my-profile       -> User can delete her own profile
+
+👮 ADMIN ROUTE
+    # GET    - /api/v1/users                    -> Get all users by admin
+    # GET  - /api/v1/users/:id                  -> Get single user by admin
+    # PATCH  - /api/v1/users/status/:id         -> Update user status by admin (block/unblock)
+    # DELETE  - /api/v1/users/status/:id        -> Delete a user using ID (ADMIN)
+
+📦 PARCEL ROUTE
+    # GET    - /api/v1/parcels/me               -> Sender and Receiver views their parcels
+    # GET    - /api/v1/parcels/incoming         -> Receiver views incoming parcels
+    # POST   - /api/v1/parcels/create-parcel    -> Sender create parcels
+    # PATCH  - /api/v1/parcels/confirm/:id      -> Receiver confirms delivery  
+    # PATCH  - /api/v1/parcels/:id/cancel       -> Sender cancels their parcel (Sender)
+    # PATCH  - /api/v1/parcels/:id/status       -> Admin updates parcel status  
+    # GET    - /api/v1/parcels/:id/status-log   -> View status logs of a parcel  
+    # GET    - /api/v1/parcels/:id              -> Get single parcel
+    # GET    - /api/v1/parcels                  -> Admin views all parcels (with filters)
