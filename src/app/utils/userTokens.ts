@@ -17,9 +17,7 @@ export const createUserTokens = (user: Partial<IUser>) => {
         role: user.role
     };
 
-
     const accessToken = generateToken(jwtPayload, SECRET.JWT_ACCESS_SECRET, SECRET.JWT_ACCESS_EXPIRES);
-
 
     const refreshToken = generateToken(jwtPayload, SECRET.JWT_REFRESH_SECRET, SECRET.JWT_REFRESH_EXPIRES);
 

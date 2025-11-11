@@ -1,11 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
-
 import { User } from "../user/user.model";
-import { SECRET } from "../../config/env";
 import { IUser } from "../user/user.interface";
-import { generateToken } from "../../utils/jwt";
 import { ApiError } from "../../errors/ApiError";
 import { HTTP_STATUS } from "../../constants/httpStatus";
 import { createNewAccessTokenWithRefreshToken, createUserTokens } from "../../utils/userTokens";

@@ -14,13 +14,13 @@ export const checkAuth = (...roles: string[]) => async (
     next: NextFunction
 ) => {
     try {
-        const accessToken = req.headers.authorization;
+        const token = req.cookies.accessToken;
 
-        if (!accessToken) {
+        if (!token) {
             throw new ApiError(403, "No token received!");
         };
 
-        const verifiedToken = verifyToken(accessToken, SECRET.JWT_ACCESS_SECRET) as JwtPayload;
+        const verifiedToken = verifyToken(token, SECRET.JWT_ACCESS_SECRET) as JwtPayload;
 
 
         if (!roles.includes(verifiedToken.role)) {

@@ -2,9 +2,9 @@
 
 ✅ ROLES
 ----------
-→ 🧍 Sender - Creates parcel delivery requests  
-→ 📥 Receiver - Receives parcels and confirms delivery  
-→ 🛡️ Admin - Manages users, parcels, and delivery statuses  
+→ 🧍 Sender - Creates parcel delivery requests 
+→ 📥 Receiver - Receives parcels and confirms delivery 
+→ 🛡️ Admin - Manages users, parcels, and delivery statuses 
 
 
 👥 USER FUNCTIONALITIES 👥
@@ -50,6 +50,7 @@
     → GET    - /api/v1/users                    -> Get all users by admin
     → GET  - /api/v1/users/:id                  -> Get single user by admin
     → PATCH  - /api/v1/users/status/:id         -> Update user status by admin (block/unblock)
+    → PATCH  - /api/v1/users/:id                -> Update user role by admin (sender/receiver)
     → DELETE  - /api/v1/users/status/:id        -> Delete a user using ID by admin
 
 
