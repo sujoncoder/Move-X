@@ -1,10 +1,9 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import bcrypt from "bcryptjs";
 
 import { SECRET } from "../../config/env";
 import { User } from "../user/user.model";
 import { ApiError } from "../../errors/ApiError";
-import { IUser, Role } from "../user/user.interface";
+import { type IUser, Role } from "../user/user.interface";
 import { HTTP_STATUS } from "../../constants/httpStatus";
 
 

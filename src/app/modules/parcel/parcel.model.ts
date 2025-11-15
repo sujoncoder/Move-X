@@ -2,7 +2,7 @@ import { Schema, model } from "mongoose";
 
 import { generateTrackingId } from "../../utils/generateTrackingId";
 
-import { IParcel, ParcelStatus, ParcelType } from "./parcel.interface";
+import { type IParcel, ParcelStatus, ParcelType } from "./parcel.interface";
 
 
 

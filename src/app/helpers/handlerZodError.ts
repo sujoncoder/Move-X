@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { TErrorSources, TGenericErrorResponse } from "../interfaces/error.types";
-
+import type { TErrorSources, TGenericErrorResponse } from "../interfaces/error.types";
 
 
 // HANDLE ZOD ERROR

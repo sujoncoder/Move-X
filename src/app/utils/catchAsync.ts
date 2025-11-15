@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { Request, Response, NextFunction, RequestHandler } from "express";
+import type { Request, Response, NextFunction, RequestHandler } from "express";
 
 
 // ASYNC-CATCH HANDER

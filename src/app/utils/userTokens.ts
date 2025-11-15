@@ -1,10 +1,10 @@
-import { JwtPayload } from "jsonwebtoken";
+import type { JwtPayload } from "jsonwebtoken";
 
 import { SECRET } from "../config/env";
 import { ApiError } from "../errors/ApiError";
 import { User } from "../modules/user/user.model";
 import { HTTP_STATUS } from "../constants/httpStatus";
-import { IUser } from "../modules/user/user.interface";
+import type { IUser } from "../modules/user/user.interface";
 
 import { generateToken, verifyToken } from "./jwt";
 

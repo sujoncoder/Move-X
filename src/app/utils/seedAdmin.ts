@@ -1,11 +1,7 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable no-console */
-import chalk from "chalk";
 import bcrypt from "bcryptjs";
-
 import { SECRET } from "../config/env";
 import { User } from "../modules/user/user.model";
-import { IUser, Role } from "../modules/user/user.interface";
+import { type IUser, Role } from "../modules/user/user.interface";
 
 
 // SEED ADMIN
@@ -14,7 +10,7 @@ export const seedAdmin = async () => {
         const isAdminExist = await User.findOne({ email: SECRET.ADMIN_EMAIL });
 
         if (isAdminExist) {
-            console.log(chalk.red("⚠️  Admin Already Exist!"));
+            console.log("⚠️  Admin Already Exist!");
             return;
         };
 

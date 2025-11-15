@@ -6,7 +6,7 @@ import { addTrackingEvent } from "../../utils/addTrackingEvent";
 import { generateTrackingId } from "../../utils/generateTrackingId";
 
 import { Parcel } from "./parcel.model";
-import { IParcel, ParcelStatus } from "./parcel.interface";
+import { type IParcel, ParcelStatus } from "./parcel.interface";
 
 
 

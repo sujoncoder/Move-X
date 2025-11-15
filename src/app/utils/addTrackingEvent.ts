@@ -1,4 +1,4 @@
-import { IParcel } from '../modules/parcel/parcel.interface';
+import type { IParcel } from '../modules/parcel/parcel.interface';
 import { ParcelStatus } from '../modules/parcel/parcel.interface';
 
 

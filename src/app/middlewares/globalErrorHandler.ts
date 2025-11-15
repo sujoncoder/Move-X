@@ -1,10 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 
 import { SECRET } from "../config/env";
 import { ApiError } from "../errors/ApiError";
-import { TErrorSources } from "../interfaces/error.types";
+import type { TErrorSources } from "../interfaces/error.types";
 import { handlerZodError } from "../helpers/handlerZodError";
 import { handleCastError } from "../helpers/handleCastError";
 import { handlerDuplicateError } from "../helpers/handleDuplicateError";

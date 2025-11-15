@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 
 import { catchAsync } from "../../utils/catchAsync";
 import { sendResponse } from "../../utils/sendResponse";
@@ -52,7 +52,7 @@ export const cancelParcel = catchAsync(async (req: Request, res: Response) => {
     const parcelId = req.params.id;
     const userId = req.user.userId;
 
-    const result = await cancelParcelService(parcelId, userId);
+    const result = await cancelParcelService(parcelId as string, userId);
 
     sendResponse(res, {
         success: true,
@@ -71,7 +71,7 @@ export const confirmDelivered = async (req: Request, res: Response) => {
     const parcelId = req.params.id;
     const receiverId = req.user.userId;
 
-    const result = await confirmDeliveredService(parcelId, receiverId);
+    const result = await confirmDeliveredService(parcelId as string, receiverId);
 
     res.status(HTTP_STATUS.OK).json({
         success: true,
@@ -132,7 +132,7 @@ export const parcelStatusChange = catchAsync(async (req: Request, res: Response)
     };
 
     const updatedParcel = await parcelStatusUpdateService(
-        parcelId,
+        parcelId as string,
         req.user.role,
         status,
         location
@@ -154,7 +154,7 @@ export const getSingleParcel = catchAsync(
         const userId = req.user?.userId;
         const userRole = req.user?.role;
 
-        const result = await getSingleParcelService(parcelId, userId, userRole);
+        const result = await getSingleParcelService(parcelId as string, userId, userRole);
 
         sendResponse(res, {
             statusCode: 200,
@@ -172,7 +172,7 @@ export const getParcelStatusLog = async (req: Request, res: Response) => {
     const userId = req.user.userId;
     const userRole = req.user.role;
 
-    const statusLog = await getParcelStatusLogService(parcelId, userId, userRole);
+    const statusLog = await getParcelStatusLogService(parcelId as string, userId, userRole);
 
     sendResponse(res, {
         statusCode: 200,

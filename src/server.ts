@@ -1,23 +1,26 @@
-/* eslint-disable no-console */
 import { Server } from "http";
 
 import app from "./app";
-import { SECRET } from "./app/config/env";
 import connectDB from "./app/config/database";
-import { seedAdmin } from "./app/utils/seedAdmin";
+import { SECRET } from "./app/config/env";
 import gracefulShutdown, { setServer } from "./app/config/shutdown";
+import { seedAdmin } from "./app/utils/seedAdmin";
 
 
 let server: Server;
 
 // START SERVER FUNCTION
 const startServer = async () => {
-    await connectDB();
-    server = app.listen(SECRET.PORT, () => {
-        console.log(`➡️  Server is running on http://localhost:${SECRET.PORT}`)
-    });
+    try {
+        await connectDB();
+        server = app.listen(SECRET.PORT, () => {
+            console.log(`➡️  Server is running on http://localhost:${SECRET.PORT}`)
+        });
 
-    setServer(server);
+        setServer(server);
+    } catch (error: any) {
+        console.error("Failed to start server:", error.message);
+    }
 };
 
 

@@ -1,5 +1,3 @@
-/* eslint-disable no-console */
-import chalk from "chalk";
 import dotenv from "dotenv";
 
 
@@ -37,7 +35,7 @@ const getValidatedEnv = (): IEnvType => {
 
     requiredKeys.forEach((key) => {
         if (!process.env[key]) {
-            console.error(chalk.redBright(`❌ Missing environment variable: ${key}`));
+            console.error(`❌ Missing environment variable: ${key}`);
             process.exit(1);
         };
     });

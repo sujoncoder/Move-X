@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { TGenericErrorResponse } from "../interfaces/error.types";
+import type { TGenericErrorResponse } from "../interfaces/error.types";
 
 
 // HANDLE DUPLICATE ERROR

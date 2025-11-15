@@ -1,6 +1,6 @@
 import { model, Schema } from "mongoose";
 
-import { IUser, Role } from "./user.interface";
+import { type IUser, Role } from "./user.interface";
 
 
 // USER SCHEMA

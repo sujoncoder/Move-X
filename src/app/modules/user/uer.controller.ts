@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 
 import { ApiError } from "../../errors/ApiError";
 import { catchAsync } from "../../utils/catchAsync";
@@ -91,7 +90,7 @@ export const getAllUsers = catchAsync(async (req: Request, res: Response, next: 
 // GET SINGLE USER CONTROLLER - (ADMIN)
 export const getUser = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
 
-    const user = await getUserByIdService(req.params.id);
+    const user = await getUserByIdService(req.params.id as string);
 
     sendResponse(res, {
         success: true,
@@ -108,7 +107,7 @@ export const userStatusChange = catchAsync(async (req: Request, res: Response, n
     const userId = req.params.id;
     const { isBlocked } = req.body;
 
-    const result = await userStatusService(userId, isBlocked);
+    const result = await userStatusService(userId as string, isBlocked);
 
     sendResponse(res, {
         success: true,
@@ -125,7 +124,7 @@ export const userStatusChange = catchAsync(async (req: Request, res: Response, n
 // UPDATE USER ROLE CONTROLLER - (ADMIN)
 export const updateUserRole = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
 
-    const id = req.params.id;
+    const id = req.params.id as string;
     const { role, ...rest } = req.body;
 
     if (Object.keys(rest).length > 0) {
@@ -156,7 +155,7 @@ export const updateUserRole = catchAsync(async (req: Request, res: Response, nex
 // DELETE SINGLE USER CONTROLLER - (ADMIN)
 export const deleteUser = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
 
-    const user = await deleteUserByIdService(req.params.id);
+    const user = await deleteUserByIdService(req.params.id as string);
 
     sendResponse(res, {
         success: true,
