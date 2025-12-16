@@ -13,8 +13,9 @@ export const setAuthCookie = (res: Response, tokenInfo: authTokens) => {
     if (tokenInfo.accessToken) {
         res.cookie("accessToken", tokenInfo.accessToken, {
             httpOnly: true,
-            secure: false,
-            sameSite: "none"
+            secure: true,
+            sameSite: "none",
+            maxAge: 7 * 24 * 60 * 60 * 1000,
         });
     };
 
@@ -22,8 +23,9 @@ export const setAuthCookie = (res: Response, tokenInfo: authTokens) => {
     if (tokenInfo.refreshToken) {
         res.cookie("refreshToken", tokenInfo.refreshToken, {
             httpOnly: true,
-            secure: false,
-            sameSite: "none"
+            secure: true,
+            sameSite: "none",
+            maxAge: 15 * 24 * 60 * 60 * 1000,
         });
     };
 };

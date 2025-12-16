@@ -1,5 +1,5 @@
 {
-  "name": "movex_backend",
+  "name": "movex",
   "scripts": {
     "dev": "bun --watch run src/server.ts",
     "build": "tsc",
